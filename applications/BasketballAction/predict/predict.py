@@ -2,12 +2,15 @@
 import os
 import sys
 import json
+import time
+
 
 sys.path.append('action_detect')
-from action import ActionDetection
+from applications.BasketballAction.predict.action_detect.action  import ActionDetection
 
 if __name__ == '__main__':
-    dataset_dir = "datasets/"
+    start = time.time()
+    dataset_dir = "/data/cx/ysp-2024/PaddleVideo/applications/BasketballAction/predict/datasets/NBA/"
     
     model_predict = ActionDetection(cfg_file="configs_basketball/configs_basketball.yaml")
     model_predict.load_model()
@@ -30,6 +33,10 @@ if __name__ == '__main__':
                         'bmn_results': bmn_results, 
                         'action_results': action_results})
 
+    end = time.time()
+    print(f"process time: {end -start}s")
+
     with open('results.json', 'w', encoding='utf-8') as f:
        data = json.dumps(results, indent=4, ensure_ascii=False)
-       f.write(data) 
+       f.write(data)
+

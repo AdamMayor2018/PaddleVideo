@@ -23,11 +23,14 @@ import models.bmn_infer as prop_model
 import models.lstm_infer as classify_model
 
 import logger
+
 logger = logger.Logger()
+
 
 def record_time_info(func):
     """decorator func to log cost time for func
     """
+
     @functools.wraps(func)
     def timer(*args):
         """log cost time for func
@@ -38,21 +41,23 @@ def record_time_info(func):
         cost_time = round(time.time() - start_time, 5)
         logger.info("function [{}] run time: {:.2f} min".format(func.__name__, cost_time / 60))
         return retval
+
     return timer
 
 
 class ActionDetection(object):
     """ModelPredict"""
+
     def __init__(self, cfg_file="configs/configs.yaml"):
         cfg = parse_config(cfg_file)
         self.configs = cfg
         print_configs(self.configs, "Infer")
 
         name = 'COMMON'
-        self.DEBUG          = cfg[name]['DEBUG']
-        self.BMN_ONLY       = cfg[name]['BMN_ONLY']
-        self.LSTM_ONLY      = cfg[name]['LSTM_ONLY']
-        self.PCM_ONLY       = cfg[name]['PCM_ONLY']
+        self.DEBUG = cfg[name]['DEBUG']
+        self.BMN_ONLY = cfg[name]['BMN_ONLY']
+        self.LSTM_ONLY = cfg[name]['LSTM_ONLY']
+        self.PCM_ONLY = cfg[name]['PCM_ONLY']
         if self.LSTM_ONLY:
             self.prop_dict = {}
             for dataset in ['EuroCup2016']:
@@ -62,7 +67,6 @@ class ActionDetection(object):
                     basename = prop_json.replace('feature_bmn/prop.json', 'mp4')
                     basename = basename + '/' + item['video_name'] + '.mp4'
                     self.prop_dict[basename] = item['bmn_results']
-            
 
     @record_time_info
     def load_model(self):
@@ -73,7 +77,7 @@ class ActionDetection(object):
             self.image_model = image_model.InferModel(self.configs)
             if not self.PCM_ONLY:
                 self.audio_model = audio_model.InferModel(self.configs)
-    
+
         if not self.LSTM_ONLY:
             self.prop_model = prop_model.InferModel(self.configs)
 
@@ -93,17 +97,17 @@ class ActionDetection(object):
         self.configs['COMMON']['fps'] = fps
 
         logger.info("==> input video {}".format(os.path.basename(self.imgs_path)))
-    
+
         # step 1: extract feature
         video_features = self.extract_feature()
-    
+
         # step2: get proposal
         bmn_results = self.extract_proposal(video_features)
-         
+
         # step3: classify 
         material = {'feature': video_features, 'proposal': bmn_results}
         action_results = self.video_classify(material)
-        
+
         return bmn_results, action_results
 
     @record_time_info
@@ -111,7 +115,7 @@ class ActionDetection(object):
         """video classify"""
         if self.BMN_ONLY:
             return []
-        action_results = self.classify_model.predict(self.configs, material=material) 
+        action_results = self.classify_model.predict(self.configs, material=material)
         logger.info('action shape {}'.format(np.array(action_results).shape))
         return action_results
 
@@ -158,8 +162,8 @@ class ActionDetection(object):
 
         return video_features
 
-if __name__ == '__main__':
 
+if __name__ == '__main__':
     model_predict = ActionDetection(cfg_file="../configs/configs.yaml")
     model_predict.load_model()
 
@@ -170,6 +174,5 @@ if __name__ == '__main__':
     results = {'bmn_results': bmn_results, 'action_results': action_results}
 
     with open('results.json', 'w', encoding='utf-8') as f:
-       data = json.dumps(results, indent=4, ensure_ascii=False)
-       f.write(data)
-
+        data = json.dumps(results, indent=4, ensure_ascii=False)
+        f.write(data)

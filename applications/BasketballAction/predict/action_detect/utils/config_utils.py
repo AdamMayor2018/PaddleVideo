@@ -18,9 +18,9 @@ config_utils
 import yaml
 import ast
 
-import logger
+import logging
 
-logger = logger.Logger()
+logger = logging.Logger(name="config-logger")
 
 CONFIG_SECS = [
     'train',

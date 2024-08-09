@@ -1,16 +1,16 @@
 [简体中文](README.md) | English
 
-# PaddleVideo
+# PaddleVideo 
 
 ![python version](https://img.shields.io/badge/python-3.7+-orange.svg) ![paddle version](https://img.shields.io/badge/PaddlePaddle-2.0-blue)
 
-## Introduction
+## Introduction  
 
 PaddleVideo is a toolset for video tasks prepared for the industry and academia. This repository provides examples and best practice guildelines for exploring deep learning algorithm in the scene of video area.
 
 <div align="center">
   <img src="docs/images/home.gif" width="450px"/><br>
-</div>
+</div>   
 
 
 ## Update:
